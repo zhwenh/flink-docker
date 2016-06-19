@@ -19,11 +19,11 @@ RUN mkdir -p /opt && \
     cd /opt && \
     curl http://www.us.apache.org/dist/flink/flink-${flink_ver}/flink-${flink_ver}-bin-hadoop27-scala_${scala_ver}.tgz | \
         tar -zx && \
-    ln -s flink-${flink_ver}-bin-hadoop27-scala_${scala_ver} flink && \
+    ln -s flink-${flink_ver} flink && \
     echo Flink ${flink_ver} installed in /opt
 
 
 ADD log4j.properties logback.xml /opt/flink/conf/
-ADD start-common.sh start-worker.sh start-master.sh /
+ADD start-common.sh start-worker.sh start-master.sh /opt/flink/bin/
 ADD flink-conf.yaml /opt/flink/conf/flink-conf.yaml
 ENV PATH $PATH:/opt/flink/bin
