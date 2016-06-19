@@ -1,4 +1,4 @@
-FROM shouldbee/scala:2.11.7-openjdk-8-jdk
+FROM shouldbee/scala:2.11.7-openjdk8
 
 ENV hadoop_ver 2.7.0
 ENV flink_ver 1.0.3
