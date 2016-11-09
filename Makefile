@@ -3,10 +3,7 @@ push: push-flink
 .PHONY: push push-flink flink
 
 CONTAINER_NAME = melentye/flink
-# To bump the flink version, bump the flink_ver in Dockerfile, bump
-# this tag and reset to v1. You should also double check the native
-# Hadoop libs at that point (we grab the 2.7.0 libs).
-TAG = 1.0.3_v1
+TAG = latest
 
 flink:
 	docker build -t $(CONTAINER_NAME) .

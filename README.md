@@ -4,7 +4,7 @@ This is a Docker image appropriate for running Flink in Kuberenetes. You can als
 * `flink-master` - runs a Flink JobManager in cluster mode and exposes a port for Flink and a port for the WebUI.
 * `flink-worker` - runs a Flink TaskManager and connects to the Flink JobManager via static DNS name `flink-master`.
 
-The structure of the repo is heavily influenced by [Spark in Kubernetes](https://github.com/kubernetes/application-images/tree/master/spark)
+The structure of the repo is heavily influenced by [Spark in Kubernetes](https://github.com/kubernetes/application-images/tree/master/spark) and [docker-flink](https://github.com/apache/flink/tree/master/flink-contrib/docker-flink)
 
 # Usage
 
@@ -14,8 +14,8 @@ You only need to build an image if you have changed it, otherwise skip to the ne
 
 ## Run locally
 
-Get the code from Github and run `docker-compose up` to start with a single TaskManager. 
-`docker-compose scale flink-worker=5` - scale to 5 workers.
+Get the code from Github and run `docker-compose up -d` to start with a single TaskManager. 
+`docker-compose scale flink-worker=5` - scale to 5 workers. `docker-compose down`
 
 ## Run in Kubernetes
 
