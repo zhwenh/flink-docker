@@ -15,10 +15,13 @@ RUN set -x && \
     tar xz -C ${FLINK_INSTALL_PATH} && \
     ln -s ${FLINK_INSTALL_PATH}/flink-${FLINK_VERSION} ${FLINK_HOME} && \
     sed -i -e "s/echo \$mypid >> \$pid/echo \$mypid >> \$pid \&\& wait/g" ${FLINK_HOME}/bin/flink-daemon.sh && \
+    sed -i -e "s/ > \"\$out\" 2>&1 < \/dev\/null//g" ${FLINK_HOME}/bin/flink-daemon.sh && \
     rm -rf /var/cache/apk/* && \
     echo Installed Flink ${FLINK_VERSION} to ${FLINK_HOME}
 
 ADD docker-entrypoint.sh ${FLINK_HOME}/bin/
+# Additional output to console, allows gettings logs with 'docker-compose logs'
+ADD log4j.properties ${FLINK_HOME}/conf/
 
 ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["sh", "-c"]
