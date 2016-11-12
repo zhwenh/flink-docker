@@ -11,13 +11,13 @@ ENV PATH $PATH:$FLINK_HOME/bin
 RUN set -x && \
     mkdir -p ${FLINK_INSTALL_PATH} && \
     apk --update add --virtual curl && \
-    curl -s $(curl -s https://www.apache.org/dyn/closer.cgi\?preferred\=true)flink/flink-${FLINK_VERSION}/flink-${FLINK_VERSION}-bin-hadoop${HADOOP_VERSION}-scala_${SCALA_BINARY_VERSION}.tgz | \
-    tar xz -C ${FLINK_INSTALL_PATH} && \
-    ln -s ${FLINK_INSTALL_PATH}/flink-${FLINK_VERSION} ${FLINK_HOME} && \
+    curl -s https://people.apache.org/~mxm/flink-1.1.3-custom-akka3.zip -o $FLINK_INSTALL_PATH/flink-dist.zip && \
+    unzip $FLINK_INSTALL_PATH/flink-dist.zip -d ${FLINK_INSTALL_PATH} && \
+    ln -s ${FLINK_INSTALL_PATH}/flink-${FLINK_VERSION}-custom-akka3 ${FLINK_HOME} && \
     sed -i -e "s/echo \$mypid >> \$pid/echo \$mypid >> \$pid \&\& wait/g" ${FLINK_HOME}/bin/flink-daemon.sh && \
     sed -i -e "s/ > \"\$out\" 2>&1 < \/dev\/null//g" ${FLINK_HOME}/bin/flink-daemon.sh && \
     rm -rf /var/cache/apk/* && \
-    echo Installed Flink ${FLINK_VERSION} to ${FLINK_HOME}
+    echo Installed Flink ${FLINK_VERSION}-custom-akka3 to ${FLINK_HOME}
 
 ADD docker-entrypoint.sh ${FLINK_HOME}/bin/
 # Additional output to console, allows gettings logs with 'docker-compose logs'

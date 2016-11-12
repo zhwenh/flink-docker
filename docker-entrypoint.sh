@@ -28,6 +28,7 @@ fi
 if [ "$1" = "jobmanager" ]; then
     
     sed -i -e "s/jobmanager.rpc.address: localhost/jobmanager.rpc.address: $JOBMANAGER_HOSTNAME/g" $FLINK_HOME/conf/flink-conf.yaml
+    sed -i -e "s/jobmanager.rpc.bind-address: localhost/jobmanager.rpc.bind-address: 0.0.0.0/g" $FLINK_HOME/conf/flink-conf.yaml
 
     echo "Starting Job Manager"
     echo "config file: " && grep '^[^\n#]' $FLINK_HOME/conf/flink-conf.yaml
