@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 ################################################################################
 #  Licensed to the Apache Software Foundation (ASF) under one
@@ -18,27 +18,42 @@
 # limitations under the License.
 ################################################################################
 
-JOBMANAGER_HOSTNAME="$2"
+# jobmanager or taskmanager
+FLINK_COMPONENT=$1
+shift
 
-if [ -z "$JOBMANAGER_HOSTNAME" ]; then
-    # make use of Docker container linking and exploit the jobmanager entry in /etc/hosts
-    JOBMANAGER_HOSTNAME="flink-jobmanager"
-fi 
+FLINK_CONFIG=$FLINK_HOME/conf/flink-conf.yaml
 
-if [ "$1" = "jobmanager" ]; then
-    
-    sed -i -e "s/jobmanager.rpc.address: localhost/jobmanager.rpc.address: $JOBMANAGER_HOSTNAME/g" $FLINK_HOME/conf/flink-conf.yaml
+function set_config_property {
+    key=$1
+    value=$2
+    grep -qe "^#*\s*$key:" $FLINK_CONFIG && sed -ir "s~^#*\s*$key:.*~$key: $value~" $FLINK_CONFIG || echo -e "$key: $value\n" >> $FLINK_CONFIG
+}
 
-    echo "Starting Job Manager"
-    echo "config file: " && grep '^[^\n#]' $FLINK_HOME/conf/flink-conf.yaml
+function setup_config {
+    for i in "$@"
+    do
+        set_config_property ${i%=*} ${i#*=}
+        shift
+    done
+
+    echo "config file: " && grep '^[^\n#]' $FLINK_CONFIG
+}
+
+# Set default config values
+set_config_property "jobmanager.rpc.address" "flink-jobmanager"
+
+if [ "$FLINK_COMPONENT" = "jobmanager" ]; then
+    # Override config params form command line arguments
+    setup_config "$@"
+
     $FLINK_HOME/bin/jobmanager.sh start cluster
-elif [ "$1" = "taskmanager" ]; then
-    sed -i -e "s/jobmanager.rpc.address: localhost/jobmanager.rpc.address: $JOBMANAGER_HOSTNAME/g" $FLINK_HOME/conf/flink-conf.yaml
-
-    sed -i -e "s/taskmanager.numberOfTaskSlots: 1/taskmanager.numberOfTaskSlots: `grep -c ^processor /proc/cpuinfo`/g" $FLINK_HOME/conf/flink-conf.yaml
-
-    echo "Starting Task Manager"
-    echo "config file: " && grep '^[^\n#]' $FLINK_HOME/conf/flink-conf.yaml
+elif [ "$FLINK_COMPONENT" = "taskmanager" ]; then
+    set_config_property "taskmanager.numberOfTaskSlots" `grep -c ^processor /proc/cpuinfo`
+    
+    # Override config params from command line arguments
+    setup_config "$@"
+    
     $FLINK_HOME/bin/taskmanager.sh start
 else
     $@
