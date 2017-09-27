@@ -1,4 +1,4 @@
-FROM denvazh/scala:2.11.8-openjdk8
+FROM bigtruedata/scala:2.11.8
 
 ARG HADOOP_VERSION=27
 ARG FLINK_VERSION=1.2.1
